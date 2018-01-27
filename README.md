@@ -2,6 +2,8 @@
 
 The idea behind this project is to find what is trending on Twitter. Once found, a **WorldCloud** can be created which will easily help in easy visualization of the analysis performed. 
 
+### Technologies used - R
+
 ### Packages used
 1. twitteR - Provides an API to fetch tweets from Twitter.
 2. wordcloud - To create a wordcloud of the analysis performed.
