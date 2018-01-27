@@ -1,0 +1,60 @@
+C## INSTALL REQUIRED PACKAGES
+#install.packages('tm')
+#install.packages('wordcloud')
+#install.packages('twitteR')
+#install.packages('RColorBrewer')
+#install.packages('e1071')
+
+
+## CALL THE PACKAGES
+library(tm)
+library(wordcloud)
+library(twitteR)
+library(RColorBrewer)
+library(e1071)
+library(class)
+
+
+## CONNECT TO TWITTER
+consumer_key <- "zIKvowa1joev3R3BgCNjpNhHT"
+consumer_secret <- "qukDM6wmdrzRaL2ceVMYU3fhXKKgTWywHkRZWYPP0Gbw8iy40V"
+access_token <- "533831913-xlmXTmWGMTemlOGLBv8aKyPzisYDAF4nr2AdXZyB"
+access_token_secret <- 	"5edUXLZ2u3NF4LTjUsapr27XNHudTknAevJIqtZhKCLVs"
+
+setup_twitter_oauth(consumer_key,consumer_secret,access_token,access_token_secret)
+
+
+## GET TWITTER TWEETS
+tweets <- searchTwitter('soccer',n=2000,"en")
+
+
+## GRAB TEXT FROM TWEETS
+tweets_text <- sapply(tweets,function(x) x$getText())
+
+
+## CLEAN DATA
+tweets_text <- iconv(tweets_text,"UTF-8","ASCII")
+
+
+## CREATE CORPUS OF DATA
+tweets_corpus <- Corpus(VectorSource(tweets_text))
+
+
+## CREATE DOCUMENT TERM MATRIX
+term_doc_matrix <- TermDocumentMatrix(tweets_corpus,control=list(removePunctuation=TRUE,
+                                                                 removeNumbers=TRUE,
+                                                                 tolower=TRUE,
+                                                                 stopwords=c('soccer','https',stopwords('english'))))
+
+
+## CONVERT OBJECT RETURNED BY TermDocumentMatrix() INTO MATRIX
+term_doc_matrix <- as.matrix(term_doc_matrix)
+
+
+## GET THE WORDCOUNT
+term_freq <- sort(rowSums(term_doc_matrix),decreasing=TRUE)
+df <- data.frame(word=names(term_freq),freq=term_freq)
+
+
+## CREATE WORDCLOUD
+wordcloud(df$word,df$freq,random.order = TRUE)
